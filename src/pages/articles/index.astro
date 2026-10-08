@@ -1,0 +1,118 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("posts", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const years = [...new Set(
+  posts.map((post) => post.data.date.getUTCFullYear())
+)].sort((a, b) => b - a);
+
+const groups = years.map((year) => ({
+  year,
+  posts: posts.filter(
+    (post) => post.data.date.getUTCFullYear() === year
+  ),
+}));
+
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+
+<BaseLayout
+  title="Writing"
+  description="All writing, organized by year."
+>
+  <h1 class="archive-title">Writing</h1>
+
+  {groups.length === 0 ? (
+    <p class="muted">No posts yet.</p>
+  ) : (
+    groups.map((group) => (
+      <section class="year-group" aria-labelledby={`year-${group.year}`}>
+        <h2 id={`year-${group.year}`}>{group.year}</h2>
+
+        <ul class="post-list">
+          {group.posts.map((post) => (
+            <li>
+              <time datetime={post.data.date.toISOString()}>
+                {post.data.date.toISOString().slice(0, 10)}
+              </time>
+
+              <a href={`${base}articles/${post.id}/`}>
+                {post.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  )}
+</BaseLayout>
+
+<style>
+  .archive-title {
+    margin: 0 0 32px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 25px;
+    letter-spacing: -0.03em;
+  }
+
+  .year-group + .year-group {
+    margin-top: 36px;
+  }
+
+  h2 {
+    margin: 0 0 14px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 21px;
+    letter-spacing: 0;
+  }
+
+  .post-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .post-list li {
+    display: grid;
+    grid-template-columns: 10ch minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: 24px;
+    padding-block: 7px;
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  time {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .post-list a {
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 4px;
+  }
+
+  .post-list a:hover {
+    text-decoration-color: var(--accent);
+  }
+
+  @media (max-width: 540px) {
+    .post-list li {
+      grid-template-columns: 1fr;
+      gap: 2px;
+      padding-block: 10px;
+    }
+
+    time {
+      font-size: 12px;
+    }
+  }
+</style>
