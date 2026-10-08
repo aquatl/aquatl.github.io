@@ -9,23 +9,13 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 ---
 
 <BaseLayout>
-  <section aria-labelledby="intro">
-    <p class="eyebrow">A personal notebook</p>
+  <p class="intro">Notes on systems, security, and programming.</p>
 
-    <h1 id="intro">Learning how things work.</h1>
-
-    <p class="muted">
-      Notes on systems, security, and programming.
-      A place for experiments, questions, and things worth remembering.
-    </p>
-  </section>
-
-  <section id="writing" class="writing" aria-labelledby="writing-title">
-    <p class="eyebrow">The notebook</p>
-    <h2 id="writing-title">Writing</h2>
+  <section id="writing" aria-labelledby="writing-title">
+    <h1 id="writing-title">Writing</h1>
 
     {posts.length === 0 ? (
-      <p class="muted">No posts yet. The first entry is on its way.</p>
+      <p class="muted">No posts yet.</p>
     ) : (
       <ul class="post-list">
         {posts.map((post) => (
@@ -34,12 +24,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
               {post.data.date.toISOString().slice(0, 10)}
             </time>
 
-            <div>
-              <a href={`${base}articles/${post.id}/`}>
-                {post.data.title}
-              </a>
-              <p>{post.data.description}</p>
-            </div>
+            <a href={`${base}articles/${post.id}/`}>
+              {post.data.title}
+            </a>
           </li>
         ))}
       </ul>
@@ -48,48 +35,65 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 </BaseLayout>
 
 <style>
+  .intro {
+    margin: 0 0 44px;
+    font-size: 16px;
+  }
+
+  h1 {
+    margin: 0 0 22px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 25px;
+    letter-spacing: -0.03em;
+  }
+
   .post-list {
+    margin: 0;
     padding: 0;
-    margin-top: 28px;
     list-style: none;
   }
 
   .post-list li {
     display: grid;
-    grid-template-columns: 112px minmax(0, 1fr);
-    gap: 24px;
-    padding-block: 22px;
-    border-bottom: 1px solid var(--border);
+    grid-template-columns: 10ch minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: 24px;
+    padding-block: 7px;
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.6;
   }
 
-  .post-list time {
-    padding-top: 4px;
+  time {
     color: var(--muted);
-    font-family: var(--mono);
-    font-size: 13px;
+    white-space: nowrap;
   }
 
   .post-list a {
-    font-size: 20px;
-    font-weight: 500;
-    text-decoration: none;
     overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 4px;
   }
 
   .post-list a:hover {
-    text-decoration: underline;
-  }
-
-  .post-list p {
-    margin: 6px 0 0;
-    color: var(--muted);
-    font-size: 15px;
+    text-decoration-color: var(--accent);
   }
 
   @media (max-width: 540px) {
+    .intro {
+      margin-bottom: 32px;
+    }
+
     .post-list li {
       grid-template-columns: 1fr;
-      gap: 6px;
+      gap: 2px;
+      padding-block: 10px;
+    }
+
+    time {
+      font-size: 12px;
     }
   }
 </style>
