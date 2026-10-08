@@ -1,0 +1,221 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const siteName = "aquatl";
+
+const {
+  title,
+  description = "Notes on systems, security, programming, and learning.",
+} = Astro.props;
+
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title ? `${title} — ${siteName}` : siteName}</title>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="site">
+      <header>
+        <a class="brand" href={base}>
+          <span class="mark" aria-hidden="true">≈</span>
+          <span>{siteName}</span>
+        </a>
+
+        <nav aria-label="Main navigation">
+          <a href={base}>Home</a>
+          <a href={`${base}#writing`}>Writing</a>
+          <a href={`${base}about/`}>About</a>
+        </nav>
+      </header>
+
+      <main id="main">
+        <slot />
+      </main>
+
+      <footer>
+        <span>© {new Date().getFullYear()} {siteName}</span>
+        <span>A place to think out loud.</span>
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    --background: #101819;
+    --text: #e4e8e3;
+    --muted: #a0aeaa;
+    --accent: #91ceb5;
+    --border: #2c3b37;
+    --mono: "Cascadia Code", Consolas, monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .site {
+    width: min(100% - 40px, 860px);
+    margin-inline: auto;
+  }
+
+  a {
+    color: var(--accent);
+    text-underline-offset: 5px;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-block: 56px 30px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 27px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    text-decoration: none;
+  }
+
+  .mark {
+    color: var(--accent);
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  nav a:hover {
+    color: var(--accent);
+  }
+
+  main {
+    min-height: 55vh;
+    padding-block: 64px 80px;
+  }
+
+  h1, h2 {
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    max-width: 650px;
+    margin: 12px 0 24px;
+    font-size: clamp(30px, 5vw, 44px);
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  p {
+    max-width: 65ch;
+  }
+
+  .eyebrow {
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .muted {
+    color: var(--muted);
+  }
+
+  .writing {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-block: 24px 40px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: 8px;
+    left: 20px;
+    padding: 8px 12px;
+    background: var(--background);
+    transform: translateY(-160%);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 540px) {
+    header {
+      padding-top: 32px;
+    }
+
+    main {
+      padding-top: 40px;
+    }
+  }
+</style>

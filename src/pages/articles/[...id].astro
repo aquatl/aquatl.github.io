@@ -1,0 +1,144 @@
+---
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts", ({ data }) => !data.draft);
+
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
+
+const date = post.data.date.toLocaleDateString("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+>
+  <article class="post">
+    <a class="back" href={`${base}#writing`}>← All writing</a>
+
+    <div class="post-heading">
+      <time class="eyebrow" datetime={post.data.date.toISOString()}>
+        {date}
+      </time>
+
+      <h1>{post.data.title}</h1>
+      <p class="muted">{post.data.description}</p>
+
+      {post.data.tags.length > 0 && (
+        <ul class="tags" aria-label="Tags">
+          {post.data.tags.map((tag) => <li>{tag}</li>)}
+        </ul>
+      )}
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post {
+    max-width: 720px;
+    margin-inline: auto;
+    overflow-wrap: anywhere;
+  }
+
+  .back {
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+  }
+
+  .post-heading {
+    margin-block: 40px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 0;
+    list-style: none;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .prose {
+    line-height: 1.85;
+  }
+
+  .prose :global(h2) {
+    margin-top: 2.5em;
+  }
+
+  .prose :global(h3) {
+    margin-top: 2em;
+  }
+
+  .prose :global(li) {
+    margin-block: 8px;
+  }
+
+  .prose :global(pre) {
+    padding: 22px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .prose :global(code) {
+    font-family: var(--mono);
+  }
+
+  .prose :global(:not(pre) > code) {
+    padding: 2px 5px;
+    background: #1c2b27;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  .prose :global(blockquote) {
+    margin-inline: 0;
+    padding-left: 22px;
+    border-left: 2px solid var(--accent);
+    color: var(--muted);
+  }
+
+  .prose :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-block: 28px;
+  }
+
+  .prose :global(hr) {
+    margin-block: 40px;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+</style>
