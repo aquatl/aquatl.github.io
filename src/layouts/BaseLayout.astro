@@ -21,6 +21,8 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title ? `${title} — ${siteName}` : siteName}</title>
+    <link rel="icon" href={`${base}favicon.ico`} sizes="any" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
   </head>
 
   <body>
@@ -29,7 +31,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
     <div class="site">
       <header>
         <a class="brand" href={base}>
-          <span class="mark" aria-hidden="true">≈</span>
+          <img class="logo" src={`${base}logo.svg`} alt="" width="64" height="64"/>
           <span>{siteName}</span>
         </a>
 
@@ -61,7 +63,11 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
     --border: #2c3b37;
     --mono: "Cascadia Code", Consolas, monospace;
   }
-
+  .logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  }
   * {
     box-sizing: border-box;
   }
