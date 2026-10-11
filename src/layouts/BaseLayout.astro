@@ -2,6 +2,7 @@
 interface Props {
   title?: string;
   description?: string;
+  wide?: boolean;
 }
 
 const siteName = "aquatl";
@@ -9,6 +10,7 @@ const siteName = "aquatl";
 const {
   title,
   description = "Notes on systems, security, programming, and learning.",
+  wide = false,
 } = Astro.props;
 
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
@@ -28,7 +30,7 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
-    <div class="site">
+    <div class:list={["site", { wide }]}>
       <header>
         <a class="brand" href={base}>
           <img class="logo" src={`${base}logo.svg`} alt="" width="64" height="64"/>
@@ -62,6 +64,9 @@ const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
     --accent: #91ceb5;
     --border: #2c3b37;
     --mono: "Cascadia Code", Consolas, monospace;
+  }
+  .site.wide {
+  width: min(100% - 40px, 1040px);
   }
   .logo {
   width: 36px;

@@ -17,7 +17,10 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const toc = headings.filter(
+  (heading) => heading.depth === 2 || heading.depth === 3
+);
 const base = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/`;
 
 const date = post.data.date.toLocaleDateString("en-GB", {
@@ -31,7 +34,24 @@ const date = post.data.date.toLocaleDateString("en-GB", {
 <BaseLayout
   title={post.data.title}
   description={post.data.description}
+  wide={toc.length > 0}
 >
+  <div class:list={["article-layout", { "with-toc": toc.length > 0 }]}>
+  {toc.length > 0 && (
+    <aside class="post-toc">
+      <nav class="toc-nav" aria-label="Table of contents">
+        <p class="toc-title">Table of contents</p>
+
+        <ul>
+          {toc.map((heading) => (
+            <li class:list={{ subsection: heading.depth === 3 }}>
+              <a href={`#${heading.slug}`}>{heading.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+  )}
   <article class="post">
     <a class="back" href={`${base}articles/`}>← All writing</a>
 
@@ -54,15 +74,18 @@ const date = post.data.date.toLocaleDateString("en-GB", {
       <Content />
     </div>
   </article>
+</div>
 </BaseLayout>
 
 <style>
   .post {
+    min-width: 0;
     max-width: 720px;
+    width: 100%;
     margin-inline: auto;
     overflow-wrap: anywhere;
   }
-
+  
   .back {
     font-family: var(--mono);
     font-size: 13px;
@@ -141,4 +164,76 @@ const date = post.data.date.toLocaleDateString("en-GB", {
     border: 0;
     border-top: 1px solid var(--border);
   }
+  .article-layout {
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+.article-layout.with-toc {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.post-toc {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+
+.toc-nav {
+  display: block;
+  font-size: 13px;
+}
+
+.toc-title {
+  margin: 0 0 16px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.toc-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--border);
+}
+
+.toc-nav a {
+  display: block;
+  padding: 8px 14px;
+  color: var(--muted);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+
+.toc-nav a:hover,
+.toc-nav a:focus-visible {
+  color: var(--accent);
+}
+
+.toc-nav .subsection a {
+  padding-left: 28px;
+  font-size: 12px;
+}
+
+.prose :global(h2),
+.prose :global(h3) {
+  scroll-margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .article-layout.with-toc {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .post-toc {
+    position: static;
+    max-height: none;
+  }
+}
 </style>
