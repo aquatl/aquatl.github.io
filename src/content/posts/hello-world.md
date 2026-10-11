@@ -4,6 +4,7 @@ description: "The first entry in this notebook."
 date: 2026-10-07
 tags: ["notes"]
 draft: false
+featured: false
 ---
 
 This notebook is a place to document what I learn.
