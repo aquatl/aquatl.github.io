@@ -7,15 +7,17 @@ draft: false
 featured: false
 ---
 
+## Introduction
+
 This notebook is a place to document what I learn.
 
-## What belongs here
+### What belongs here
 
 - Things I finally understand.
 - Experiments worth remembering.
 - Mistakes and what they taught me.
 
-## A little code
+### A little code
 
 Here is a small Python example:
 
